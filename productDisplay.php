@@ -1,4 +1,32 @@
+<?php
+require('connect.php');
+session_start();
 
+if(isset($_GET['id'])){
+    $id = filter_input(INPUT_GET,'id',FILTER_VALIDATE_INT);
+
+    $query = "SELECT * FROM products WHERE product_id = {$id}";
+    $statement = $db->prepare($query);
+    $statement->execute();
+    $row = $statement->fetch();
+
+    $query2 = "SELECT * FROM comments WHERE product_id = {$id} AND comment_view = 'public' ORDER BY comment_posted DESC";
+
+    $statement2 = $db->prepare($query2);
+    $statement2->execute();
+    $comments = $statement2->fetchAll();
+
+    $image_available = false;
+    if($row['image_id'] > 1){
+        $image_available = true;
+        $queryImage = "SELECT * FROM images WHERE image_id = :imageID";
+        $statement3 = $db->prepare($queryImage);
+        $statement3->bindValue(':imageID', $row['image_id']);
+        $statement3->execute();
+        $image = $statement3->fetch();
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
