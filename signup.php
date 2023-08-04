@@ -1,3 +1,52 @@
+<?php
+$errorFlag = false;
+session_start();
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+
+    $firstName = $_POST['firstName'];
+    $lastName = $_POST['lastName'];
+    $email = $_POST['email'];
+    $phone = $_POST['phone'];
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+    $passwordConfirm = $_POST['password-confirm'];
+
+    $firstName = filter_var($_POST['firstName'], FILTER_SANITIZE_STRING);
+    $lastName = filter_var($_POST['lastName'], FILTER_SANITIZE_STRING);
+    $email = filter_var($_POST['email'], FILTER_SANITIZE_EMAIL);
+    $phone = filter_var($_POST['phone'], FILTER_SANITIZE_NUMBER_INT);
+    $username = filter_var($_POST['username'], FILTER_SANITIZE_STRING);
+    $password = filter_var($_POST['password'], FILTER_SANITIZE_STRING);
+    $passwordConfirm = filter_var($_POST['password-confirm'], FILTER_SANITIZE_STRING);
+
+
+
+
+
+    if ($password !== $passwordConfirm) {
+        $errorFlag = true;
+        $errorMessage = 'Passwords do not match. Please try again.';
+    } else {
+        $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+
+        $query = "INSERT INTO users (user_name, user_email, user_firstname, user_lastname, user_password) VALUES (:uname, :uemail, :ufirstname , :ulastname, :upassword)";
+        $statement = $db->prepare($query);
+        $statement->bindValue(':uname', $username);
+        $statement->bindValue(':uemail', $email);
+        $statement->bindValue(':ufirstname', $firstName);
+        $statement->bindValue(':ulastname', $lastName);
+        $statement->bindValue(':upassword', $hashedPassword);
+        $statement->execute();
+
+
+        header('Location: login.php');
+        exit;
+    }
+}
+
+?>
 <!DOCTYPE html>
 <html>
 <head>
