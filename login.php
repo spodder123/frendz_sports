@@ -83,7 +83,7 @@ if (isset($_POST['submit'])) {
 			</div>
 	    <?php endif ?>
 
-
+      <?php include ('footer.php'); ?>
 		</div>
 </body>
 </html>
