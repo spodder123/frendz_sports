@@ -2,6 +2,11 @@
 // Start the session
 //session_start();
 
+require ('connect.php');
+$queryforcat = "SELECT * FROM categories";
+$statementforcat = $db->prepare($queryforcat);
+$statementforcat->execute();
+$catALL = $statementforcat->fetchAll();
 
 ?>
 
